@@ -31,7 +31,8 @@ ApiError.Subject = {
     INVALID_TOKEN:'InvalidToken',
     ACCESS_DENIED:'AccessDenied',
     NOT_FOUND:'NotFound',
-    GENERIC_ERROR:'GenericError'
+    GENERIC_ERROR:'GenericError',
+    ALREADY_LOGGED:'AlreadyLogged'
 };
 
 module.exports = ApiError;

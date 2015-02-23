@@ -14,6 +14,7 @@ var async = require('async');
 var safe = require('safe');
 var _ = require('lodash');
 var ApiError = require('./ApiError');
+var mongo = require('mongodb');
 
 function foodApp(){
     var self = this;
@@ -45,10 +46,53 @@ function foodApp(){
                 app.use(bodyParser.json());
                 app.use(bodyParser.urlencoded());
                 app.use(cookieParser());
-
-
                 app.use(express.static(path.join(__dirname, '..' ,'public')));
 
+                app.use(function (req, res, next) {
+                    modules['core'].api.sessionRefreshTouch(req.session.apiToken);
+                    var clientId = req.cookies[cfg.app.cookie];
+                    async.series([
+                        function getToken (cb) {
+                            if (clientId == null) {
+                                delete req.session.apiToken;
+                                self.getRandomString(128, safe.sure(cb, function (rnd) {
+                                    clientId = rnd;
+                                    res.cookie(cfg.app.cookie, clientId, { maxAge: 3600000, path: '/' }); // 1000*60*60 = 1 hour
+                                    cb();
+                                }));
+                            } else {
+                                res.cookie(cfg.app.cookie, clientId, { maxAge: 3600000, path: '/' }); // 1000*60*60 = 1 hour
+                                cb();
+                            }
+                        },
+                        function checkTokenValid (cb) {
+                            if (req.session.apiToken != null) {
+                                modules['core'].api.checkToken(req.session.apiToken, safe.sure(function (err) { delete req.session.apiToken; cb(); }, cb));
+                            } else
+                                cb();
+                        },
+                        function ensureToken (cb) {
+                            if (req.session.apiToken == null) {
+                                modules['core'].api.getApiToken('default', clientId, 'fake', safe.sure(cb, function (result) {
+                                    req.session.apiToken = result.newToken;
+                                    cb();
+                                }));
+                            } else
+                                cb();
+                        },
+                        function (cb) {
+                            modules['core'].api.getUser(req.session.apiToken, safe.sure(cb, function (user) {
+                                if (user.password) {
+                                    delete user.password;
+                                }
+                                user.loggedin = !!(user._id);
+                                res.locals.user = user;
+                                //res.locals.user.admin = _.contains(user.access, "85");
+                                cb();
+                            }));
+                        },
+                    ], next);
+                });
                 app.use(function(req,res,next){
                     res.locals.uniq = Date.now();
                     res.locals.url = req.url;
@@ -58,7 +102,6 @@ function foodApp(){
                     res.locals.layout = "layout";
                     next();
                 });
-                cb();
                 function handleJsonRpc(jsonrpc, req, res, next) {
                     var startTime = new Date();
                     var id = null; var out = false;
@@ -104,6 +147,7 @@ function foodApp(){
                 app.post("/jsonrpc", function (req,res,next) {
                     handleJsonRpc(req.body, req, res, next);
                 });
+                self.db(cb);
             },
             function initModules(cb) {
                 // first pass, create module, grab all info
@@ -246,7 +290,19 @@ function foodApp(){
     this.getModule = function (name, cb) {
         cb(null, modules[name]);
     }
-
+    this.getRandomString = function (bits,cb) {
+        var chars,rand,i,ret;
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+        ret = '';
+        // in v8, Math.random() yields 32 pseudo-random bits (in spidermonkey it gives 53)
+        while (bits > 0) {
+            rand = Math.floor(Math.random()*0x100000000) // 32-bit integer
+            // base 64 means 6 bits per character, so we use the top 30 bits from rand to give 30/6=5 characters.
+            for (i=26; i>0 && bits>0; i-=6, bits-=6)
+                ret += chars[0x3F & rand >>> i]
+        }
+        return cb(null,ret);
+    }
     this.getModuleSync = function (name) {
         return modules[name];
     }

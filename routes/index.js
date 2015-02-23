@@ -8,7 +8,7 @@ module.exports = function (ctx) {
     app.get('/login', function(req, res, next){
         res.render('login', {notAuth: 1});
     });
-    app.get('/test', function(req, res, next){
+    app.get('/index', isLogged, function(req, res, next){
         res.render('index', {title: 'Кафе "Привет"'});
     });
     function isLogged(req, res, next){
