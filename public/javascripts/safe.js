@@ -1,1 +1,1 @@
-/home/zombierzn/work/food_frontend/node_modules/safe/lib/safe.js
+../../node_modules/safe/lib/safe.js
