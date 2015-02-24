@@ -3,13 +3,16 @@ module.exports = function (ctx) {
     var app = ctx.webapp;
     var api = ctx.getModuleSync('core').api;
     app.get('/', isLogged, function(req, res, next){
-        res.render('index', {title: 'Express'});
+        res.redirect('/index');
     });
     app.get('/login', function(req, res, next){
         res.render('login', {notAuth: 1});
     });
     app.get('/index', isLogged, function(req, res, next){
         res.render('index', {title: 'Кафе "Привет"'});
+    });
+    app.get('/users', isLogged, function(req, res, next){
+        res.render('users');
     });
     function isLogged(req, res, next){
         if (res.locals.user && res.locals.user.loggedin) {

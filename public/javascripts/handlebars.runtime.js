@@ -1,0 +1,1 @@
+../../node_modules/handlebars/dist/amd/handlebars.runtime.js

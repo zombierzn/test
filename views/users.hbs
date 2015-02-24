@@ -1,0 +1,31 @@
+<div id="mixit" class="mix-container">
+
+</div>
+<script>
+    require(["jquery", "safe", "api", "clitpl", "jquery-block", "jquery-mixitup"], function ($, safe, api, tf) {
+        $(function () {
+            var users = [];
+            var usr = {
+                name: "Иванов Иван Петрович",
+                role: "менеджер",
+                сity: "Рязань",
+                restaurant:"Кафе 'Привет'",
+                phone:"+79536745681"
+            };
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            users.push(usr);
+            tf.render('users-item', {users: users}, safe.sure(appError, function(text) {
+                $("#mixit").html(text);
+                $('#mixit').mixItUp();
+            }));
+
+        });
+    });
+</script>

@@ -46,6 +46,7 @@
         waitSeconds: 20,
         paths: {
             "hbs": "/hbs",
+            "clitpl": "clitpl",
             "safe": "safe",
             "async": "async",
             "lodash": "lodash",
@@ -57,6 +58,7 @@
             "moment-pt": "moment/lang/pt",
             "bootstrap": "bootstrap-min",
             "paginator" : "paginator",
+            "jquery-mixitup" : "jquery.mixitup.min"
         },
         shim:{
             "bootstrap": {
@@ -73,10 +75,13 @@
             },
             "jquery-form":{
                 deps:["jquery"]
+            },
+            "jquery-mixitup":{
+                deps:["jquery"]
             }
         }
     });
-    require(["jquery","bootstrap"], function ($) {
+    require(["jquery", "bootstrap"], function ($) {
 
     })
 })(require, window, document);

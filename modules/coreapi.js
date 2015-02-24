@@ -15,7 +15,6 @@ function CoreApi(ctx) {
 CoreApi.prototype.init = function (cb) {
     var self = this;
     self._config = cf();
-    self._api.group = self._ctx.getModuleSync('group').api;
     cb();
 };
 

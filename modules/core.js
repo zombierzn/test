@@ -20,7 +20,8 @@ function foodApp(){
     var self = this;
     var sessions = {};
     var tmodules = [
-        {name:"core",require:"./coreapi"}
+        {name:"core",require:"./coreapi"},
+        {name:"user",require:"./userapi"}
     ];
     var modules = {};
     var cfg = config;
