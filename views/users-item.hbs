@@ -1,5 +1,5 @@
 {{#users}}
-<div class="mix {{roleId}} {{сityId}} {{restaurantId}}">
+<div class="mix {{roleId}} {{сityId}} {{restaurantId}}" data-id="{{_id}}">
     <div class="row user-name">
         <div class="col-lg-12">
             {{name}}
@@ -11,7 +11,7 @@
             Роль:
         </div>
         <div class="col-xs-7">
-            {{role}}
+            {{role.text}}
         </div>
     </div>
     <div class="row add-info">

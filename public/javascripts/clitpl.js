@@ -42,24 +42,6 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
 
             var tasks = [function (cb) {cb()}];
 
-            if (opts.ctx.i18n) {
-                tasks.push(function (cb) {
-                    var deps = ["gettext"];
-                    var mPath =  module.config().mPath;
-                    var mName =  module.config().mName;
-                    deps.push("json!"+mPath+"locale/"+mName+"."+_user.language+".json");
-                    require(deps, function (Gettext, locale) {
-                        var locale_data = {};
-                        locale_data[mName] = locale;
-                        var _gt = new Gettext({  "domain" : mName,
-                            "locale_data" : locale_data})
-                        handlebars.registerHelper('i18n',function(options) {
-                            return _gt.gettext(options.fn(this));
-                        })
-                        cb();
-                    });
-                })
-            }
             if (opts.ctx.user) {
                 tasks.push(function (cb) {
                     require(["jsonrpc"], function (JsonRpc) {
@@ -75,65 +57,23 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
                     }
                 )
             }
-            if (opts.ctx.format_cost) {
-                handlebars.registerHelper('format_cost',function(options) {
-                    var price = options.fn(this);
-                    console.log(price);
-                    if (price.match(/^\d+$/))
-                        return '$'+price+".00";
-                    else if (price.match(/^\d+\.\d+$/))
-                        return '$'+ parseFloat(price).toFixed(2);
-                    else return price;
+            if (opts.ctx.ifUserRole) {
+                handlebars.registerHelper('ifUserRole', function(value, value2) {
+                    var user;
+                    var fn;
+                    if (!value2 && value && value.data && value.data.root && value.data.root.user) {
+                        user = value.data.root.user;
+                        fn = value;
+                    }
+                    else if (value && _.isObject(value)) {
+                        user = value;
+                        fn = value2;
+                    }
 
-                });
-                cb();
-            }
-            if (opts.ctx.format_cost) {
-                handlebars.registerHelper('format_cost',function(options) {
-                    var price = options.fn(this);
-                    if (price.match(/^\d+$/))
-                        return '$'+price+".00";
-                    else if (price.match(/^\d+\.\d+$/))
-                        return '$'+ parseFloat(price).toFixed(2);
-                    else return price;
-
-                });
-                cb();
-            }
-            if (opts.ctx.array_element) {
-                handlebars.registerHelper('array_element',function(_arr, num, options) {
-                    return _arr[num]
-                });
-                cb();
-            }
-
-            if (opts.ctx.ifHelper) {
-                handlebars.registerHelper('ifHelper',function(type, retType, options) {
-                    if (type == retType) {
-                        return options.fn(this);
-                    } else {
-                        return "";
+                    if (user.role && user.role.val && this && this.val && user.role.val == this.val){
+                        return fn.fn(this);
                     }
                 });
-                cb();
-            }
-
-            if (opts.ctx.subStr) {
-                handlebars.registerHelper('subStr',function(type, num, options) {
-                    var retStr = type.toString().substring(0, num.parseInt()) + "...";
-                    return retStr;
-                });
-                cb();
-            }
-
-            if (opts.ctx.time_string) {
-                handlebars.registerHelper('time_string',function(options) {
-                    var time = options.fn(this);
-                    if (time.toString().length<2)
-                        return '0'+time;
-                    else return time;
-                });
-                cb();
             }
             async.parallel(tasks,function (err) {
                 if (err) return cb(err);
@@ -150,15 +90,8 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
             // autodetect some common stuff
             _.forEach(scans, function (scan) {
                 if (scan.v) return;
-                opts.ctx.i18n = opts.ctx.i18n || scan.tf.indexOf("helpers.i18n")!=-1;
+                opts.ctx.ifUserRole = opts.ctx.ifUserRole || scan.tf.indexOf("helpers.ifUserRole")!=-1;
                 opts.ctx.user = opts.ctx.user || scan.tf.indexOf("depth0.user")!=-1;
-                opts.ctx.i18n_currency = opts.ctx.i18n_currency || scan.tf.indexOf("helpers.i18n_currency")!=-1;
-                opts.ctx.format_cost = opts.ctx.i18n_cost || scan.tf.indexOf("helpers.format_cost")!=-1;
-                opts.ctx.ifCond = opts.ctx.ifCond || scan.tf.indexOf("helpers.ifCond")!=-1;
-                opts.ctx.array_element = opts.ctx.array_element || scan.tf.indexOf("helpers.array_element")!=-1;
-                opts.ctx.ifHelper = opts.ctx.ifHelper || scan.tf.indexOf("helpers.ifHelper")!=-1;
-                opts.ctx.subStr = opts.ctx.subStr || scan.tf.indexOf("helpers.subStr")!=-1;
-                opts.ctx.time_string = opts.ctx.time_string || scan.tf.indexOf("helpers.time_string")!=-1;
             })
             this.compile(scans,opts, function (err, templates) {
                 if (err) return cb(err);

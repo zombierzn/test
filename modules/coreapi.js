@@ -57,7 +57,7 @@ CoreApi.prototype.getApiToken = function (appId, clientId, signature, cb) {
                 cb);
         },
     ], safe.sure(cb, function () {
-        var session = {clientId:clientId,appId:appId,user : {}};
+        var session = {clientId:clientId, appId:appId, user : {}, regRoles:[]};
         self.setSession(apiToken,session);
         cb(null, {newToken:apiToken});
     }));
@@ -95,6 +95,29 @@ CoreApi.prototype.authenticate = function (token, login, password, cb) {
                 if (!user)
                     return cb(new ApiError(('Логин или пароль введены неверно'), ApiError.Subject.INVALID_DATA));
 
+                user.regRoles = [];
+                var admin = {
+                    val: "admin",
+                    text: "Администратор"
+                };
+                var manager = {
+                    val:"manager",
+                    text:"Менеджер"
+                };
+                var operator = {
+                    val:"operator",
+                    text:"Оператор"
+                };
+                user.allRoles = {
+                    "admin": admin,
+                    "manager": manager,
+                    "operator": operator
+                };
+                if (user.role == 'admin')
+                    user.regRoles.push(admin, manager, operator);
+                else if (user.role == 'manager')
+                    user.regRoles.push(operator);
+                user.role = user.allRoles[user.role];
                 session.user = user;
                 self.setSession(token, session);
                 cb(null, user);

@@ -1,34 +1,84 @@
 <div id="responsive" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title">{{name}}</h4>
+        <h4 class="modal-title">Сведения о пользователе</h4>
     </div>
     <div class="modal-body">
         <div class="row">
             <div class="col-md-6">
-                <h4>Some Input</h4>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
+                <p>
+                    <label for="login">Логин:</label>
+                    <input id="login" class="form-control" type="text" value="{{usr.login}}" {{#existing}} disabled {{/existing}} {{#ro}} disabled {{/ro}}>
+                </p>
+                {{^existing}}
+                <p>
+                    <label for="password">Пароль:</label>
+                    <input id="password" class="form-control" type="password" value="{{usr.password}}{{#ro}} disabled {{/ro}}">
+                </p>
+                {{/existing}}
+                <p>
+                    <label for="email">Эл. почта:</label>
+                    <input id="email" class="form-control" type="email" value="{{usr.email}}" {{#ro}} disabled {{/ro}}>
+                </p>
+                <p>
+                    <label for="rest">Ресторан:</label>
+                    <select id="rest" class="selectpicker" data-width="100%" {{#existing}} disabled {{/existing}}{{#ro}} disabled {{/ro}}>
+                        {{#restorans}}
+                            <option value="{{val}}">{{text}}</option>
+                        {{/restorans}}
+                    </select>
+                </p>
             </div>
             <div class="col-md-6">
-                <h4>Some More Input</h4>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
-                <p><input class="form-control" type="text"></p>
+                <p>
+                    <label for="name">Ф.И.О.:</label>
+                    <input id="name" class="form-control" type="text" value="{{usr.name}}"{{#ro}} disabled {{/ro}}>
+                </p>
+                <p>
+                    <label for="phone">Телефон:</label>
+                    <input id="phone" class="form-control" type="tel" value="{{usr.phone}}"{{#ro}} disabled {{/ro}}>
+                </p>
+                <p>
+                    <label for="role">Роль:</label>
+                    <select id="roleSelect" class="selectpicker" data-width="100%" {{#existing}} disabled {{/existing}}{{#ro}} disabled {{/ro}}>
+                        {{#user.regRoles}}
+                            <option value="{{val}}" {{#ifUserRole ../usr}} selected {{/ifUserRole}}>{{text}}</option>
+                        {{/user.regRoles}}
+                    </select>
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="extra">Доп. информация:</label>
+                <textarea id="extra" rows="4" class="form-control" {{#ro}} disabled {{/ro}}>{{extra}}</textarea>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" data-dismiss="modal" class="btn btn-default">Закрыть</button>
+        {{^ro}}
+        {{#../existing}}
+            <button id="delete" type="button" class="btn btn-danger pull-left">Удалить</button>
+            <button id="update" type="button" class="btn btn-primary">Сохранить</button>
+        {{/../existing}}
+        {{^../existing}}
+            <button id="register" type="button" class="btn btn-primary">Зарегистрировать</button>
+        {{/../existing}}
+        {{/ro}}
+        {{#existing}}
+            <button id="resetpwd" type="button" class="btn btn-warning pull-left">Сменить пароль</button>
+        {{/existing}}
     </div>
 </div>
+<script>
+    require(["jquery", "jquery-block", "bootstrap-select", "bootstrap-modalmanager"], function ($) {
+        $(function () {
+            if(window.browser.device) {
+                $('.selectpicker').selectpicker('mobile');
+            }else{
+                $('.selectpicker').selectpicker();
+            }
+        });
+    });
+</script>

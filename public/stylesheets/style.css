@@ -103,7 +103,7 @@
   max-width: 420px;
   background: rgba(0, 79, 39, 0.6);
   margin-bottom: 2%;
-  padding: 2%;
+  padding: 1%;
   vertical-align: top;
   display: none;
   -webkit-backface-visibility: hidden;
@@ -111,10 +111,10 @@
   cursor: pointer;
 }
 .mix-container .mix.role-1 {
-  border-top: 3px solid limegreen;
+  border-top: 7px solid limegreen;
 }
 .mix-container .mix.role-2 {
-  border-top: 3px solid #f6f462;
+  border-top: 7px solid #f6f462;
 }
 /* Flex box progressive enhancements: */
 .mix-container {

@@ -1,5 +1,4 @@
 <div id="modalPlaceHolder">
-
 </div>
 <div class="controls">
    <!-- <div class="controlGroup">
@@ -37,66 +36,111 @@
             var users = [];
             users.push({
                 name: "Иванов Иван Петрович",
-                role: "менеджер",
+                role: {
+                    val:"manager",
+                    text:"Менеджер"
+                },
                 сity: "Рязань",
                 restaurant: "Кафе 'Привет'",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                login: "iivanov",
+                _id: 1
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "пользователь",
+                name: "Иванов Петр Петрович",
+                role: {
+                    val:"operator",
+                    text:"Оператор"
+                },
                 сity: "Нижний Новгород",
                 restaurant: "Кафе 'Привет'",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 2,
+                login: "fvfve"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "менеджер",
+                name: "Николаев Иван Петрович",
+                role: {
+                    val:"manager",
+                    text:"Менеджер"
+                },
                 сity: "Москва",
                 restaurant: "Жар-пицца",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 3,
+                login: "xxcvb"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "пользователь",
+                name: "Павлоа Иван Владимирович",
+                role: {
+                    val:"operator",
+                    text:"Оператор"
+                },
                 сity: "Рязань",
                 restaurant: "Жар-пицца",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 4,
+                login: "opuip"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "пользователь",
+                name: "Петров Иван Евгеньевич",
+                role: {
+                    val:"operator",
+                    text:"Оператор"
+                },
                 сity: "Нижний Новгород",
                 restaurant: "Жар-пицца",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 5,
+                login: "jkhjk"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "менеджер",
+                name: "Путин Владимир Петрович",
+                role: {
+                    val:"manager",
+                    text:"Менеджер"
+                },
                 сity: "Рязань",
                 restaurant: "Пицца-шмица",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 6,
+                login: "zdfzdf"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "менеджер",
+                name: "Бущ Джордж Петрович",
+                role: {
+                    val:"manager",
+                    text:"Менеджер"
+                },
                 сity: "Владимир",
                 restaurant: "Пицца-шмица",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 7,
+                login: "ertsyh"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "менеджер",
+                name: "Саркози Иван Алексеевич",
+                role: {
+                    val:"manager",
+                    text:"Менеджер"
+                },
                 сity: "Нижний Новгород",
                 restaurant: "Пицца-шмица",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 8,
+                login: "rtysrty"
             });
             users.push({
-                name: "Иванов Иван Петрович",
-                role: "пользователь",
+                name: "Марьин Петр Петрович",
+                role: {
+                    val:"operator",
+                    text:"Оператор"
+                },
                 сity: "Москва",
                 restaurant: "Ласточка",
-                phone: "+79536745681"
+                phone: "+79536745681",
+                _id: 9,
+                login: "sdfsdf"
             });
 
             var roles = {_sz:1};
@@ -106,11 +150,11 @@
             var citySelect = $('#citySelect');
             var restSelect = $('#restSelect');
             _.forEach(users, function(user){
-                if (!roles[user.role]){
-                    roles[user.role] = roles._sz;
+                if (!roles[user.role.val]){
+                    roles[user.role.val] = roles._sz;
                     roleSelect.append($("<option></option>")
-                            .attr("value",'.role-' + roles[user.role])
-                            .text(user.role));
+                            .attr("value",'.role-' + roles[user.role.val])
+                            .text(user.role.text));
                     roles._sz++;
                 }
                 if (!cities[user.сity]){
@@ -127,7 +171,7 @@
                             .text(user.restaurant));
                     restorants._sz++;
                 }
-                user.roleId = 'role-' + roles[user.role];
+                user.roleId = 'role-' + roles[user.role.val];
                 user.сityId = 'сity-' + cities[user.сity];
                 user.restaurantId = 'restaurant-' + restorants[user.restaurant];
             });
@@ -156,11 +200,16 @@
             tf.render('users-item', {users: users}, safe.sure(appError, function (text) {
                 $("#mixit").html(text).mixItUp({
                     animation: {
-                        duration: 400
+                        duration: window.browser.device ? 1 : 400
                     },
                     callbacks: {
                         onMixLoad: function () {
                             $(".container").unblock();
+                            $(this).mixItUp('setOptions', {
+                                animation: {
+                                    duration: 400
+                                }
+                            });
                         }
                     },
                     pagination: {
@@ -177,7 +226,8 @@
                         });
             }));
             $('body').on('click', '.mix', function(){
-                tf.render('user', {name: "Иванов Иван Петрович"}, safe.sure(appError, function (text) {
+                var id = $(this).data().id;
+                tf.render('user', {usr: users[id - 1], existing: true, ro: false}, safe.sure(appError, function (text) {
                     $("#modalPlaceHolder").html(text);
                     $('#responsive').modal();
                 }));

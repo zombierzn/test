@@ -16,6 +16,24 @@ var _ = require('lodash');
 var ApiError = require('./ApiError');
 var mongo = require('mongodb');
 
+(function handelbarsHelpers(){
+    Handlebars.registerHelper('ifUserRole',function(value, value2) {
+        var user;
+        var fn;
+        if (!value2 && value && value.data && value.data.root && value.data.root.user) {
+            user = value.data.root.user;
+            fn = value;
+        }
+        else if (value && _.isObject(value)) {
+            user = value;
+            fn = value2;
+        }
+        if (user.role && user.role.val && this && this.val && user.role.val == this.val){
+            return fn.fn(this);
+        }
+    });
+})();
+
 function foodApp(){
     var self = this;
     var sessions = {};
@@ -40,7 +58,7 @@ function foodApp(){
 
                 app.set('port', process.env.PORT || 80);
                 app.use(hbs.handlebarsMiddleware({dest: path.join(__dirname, '..', 'public', 'hbs'), src: path.join(__dirname, '..', 'views'), prefix:'/hbs/'}));
-                app.use(session({secret: 'monster mutant boogie',saveUninitialized: true, resave: false}));
+                app.use(session({secret: 'monster mutant boogie', saveUninitialized: true, resave: false}));
                 app.use(lessMiddleware({src :path.join(__dirname, '..', 'views', 'less'), dest: path.join(__dirname,'..', 'public', 'stylesheets'), prefix:'/stylesheets/',debug: false}));
                 app.use(favicon());
                 app.use(logger('dev'));
@@ -48,10 +66,6 @@ function foodApp(){
                 app.use(bodyParser.urlencoded());
                 app.use(cookieParser());
                 app.use(express.static(path.join(__dirname, '..' ,'public')));
-                app.use(function(req, res, next) {
-                    req.headers['if-none-match'] = 'no-match-for-this';
-                    next();
-                });
                 app.use(function (req, res, next) {
                     modules['core'].api.sessionRefreshTouch(req.session.apiToken);
                     var clientId = req.cookies[cfg.app.cookie];
