@@ -4,6 +4,11 @@
   padding: 15px;
   margin: 0 auto;
 }
+/*html,body {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}*/
 .form-signin .form-signin-heading, .form-signin .checkbox
 {
   margin-bottom: 10px;
@@ -89,6 +94,7 @@
   text-align: justify;
   font-size: 14px;
   margin-top: 10px;
+  padding-bottom: 55px;
 }
 
 .mix-container:after{
@@ -115,6 +121,7 @@
   display: none;
   -webkit-backface-visibility: hidden;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .mix-container .mix.role-1{
@@ -169,4 +176,35 @@
   padding-bottom: 3px;
   display: inline-block;
   white-space: nowrap;
+}
+.pag-btn {
+  display: inline-block;
+  padding: 0.5em 0em 0.5em 0.5em;
+  min-width: 30px;
+  color:#ffffff;
+  border-radius: 5px;
+  vertical-align: middle;
+  background-color: #337ab7;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pag-btn.active{
+  background-color: #255b89;
+}
+.pager{
+  margin-top: 5px!important;
+  margin-bottom: 5px!important;
+}
+.pager-list{
+  text-align: center;
+}
+.bottom-align{
+  position: fixed;
+  width: 95%;
+  bottom: 10px;
+  background: rgba(29, 34, 51, 0.85);
+  border-radius: 5px;
+}
+.modal-backdrop{
+  height: 100%;
 }

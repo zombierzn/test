@@ -60,7 +60,10 @@
             "paginator" : "paginator",
             "jquery-mixitup" : "jquery.mixitup.min",
             "jquery-ui" : "jquery-ui.min",
-            "bootstrap-select" : "bootstrap-select.min"
+            "bootstrap-select" : "bootstrap-select.min",
+            "jquery-mixitup-pagination" : "jquery.mixitup-pagination.min",
+            "bootstrap-modal" : "bootstrap-modal",
+            "bootstrap-modalmanager" : "bootstrap-modalmanager"
         },
         shim:{
             "bootstrap": {
@@ -86,6 +89,15 @@
             },
             "bootstrap-select":{
                 deps:["jquery"]
+            },
+            "jquery-mixitup-pagination":{
+                deps:["jquery-mixitup"]
+            },
+            "bootstrap-modal":{
+                deps:["jquery"]
+            },
+            "bootstrap-modalmanager":{
+                deps:["bootstrap-modal"]
             }
         }
     });

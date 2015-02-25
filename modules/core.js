@@ -48,7 +48,10 @@ function foodApp(){
                 app.use(bodyParser.urlencoded());
                 app.use(cookieParser());
                 app.use(express.static(path.join(__dirname, '..' ,'public')));
-
+                app.use(function(req, res, next) {
+                    req.headers['if-none-match'] = 'no-match-for-this';
+                    next();
+                });
                 app.use(function (req, res, next) {
                     modules['core'].api.sessionRefreshTouch(req.session.apiToken);
                     var clientId = req.cookies[cfg.app.cookie];

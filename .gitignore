@@ -1,3 +1,4 @@
 /config/local-config.json
 /node_modules
 .idea
+/public/hbs

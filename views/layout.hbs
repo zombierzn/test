@@ -3,8 +3,10 @@
     <meta charset="utf-8">
     <title>InFood - {{ title }}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel='stylesheet' href='/stylesheets/bootstrap-select.min.css' />
     <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="stylesheets/bootstrap-modal-bs3patch.css" rel="stylesheet">
+    <link href="stylesheets/bootstrap-modal.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/bootstrap-select.min.css' />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="/javascripts/require.js"></script>
     <script src="/javascripts/app.js"></script>
@@ -13,14 +15,13 @@
     </script>
 </head>
 <body>
-{{^notAuth}}
-{{> menu}}
-{{/notAuth}}
-<div class="container" style="width: 95%">
-    <div class="row">
+<div class="page-container">
+    {{^notAuth}}
+    {{> menu}}
+    {{/notAuth}}
+    <div class="container" style="width: 95%; height: 100%; position: relative">
         {{> content}}
     </div>
 </div>
-
 </body>
 </html>
