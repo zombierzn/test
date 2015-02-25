@@ -87,7 +87,8 @@
 }
 .mix-container{
   text-align: justify;
-  font-size: 0;
+  font-size: 14px;
+  margin-top: 10px;
 }
 
 .mix-container:after{
@@ -105,14 +106,23 @@
 .mix-container .mix{
   text-align: left;
   width:100%;
-  min-width: 250px;
-  max-width: 400px;
-  background: rgba(12, 116, 14, 0.78);
+  min-width: 270px;
+  max-width: 420px;
+  background: rgba(0, 79, 39, 0.60);
   margin-bottom: 2%;
   padding: 2%;
   vertical-align: top;
   display: none;
   -webkit-backface-visibility: hidden;
+  border-radius: 5px;
+}
+
+.mix-container .mix.role-1{
+  border-top: 3px solid limegreen;
+}
+
+.mix-container .mix.role-2{
+  border-top: 3px solid #f6f462;
 }
 
 /* Flex box progressive enhancements: */
@@ -124,19 +134,39 @@
   -webkit-align-content: flex-start;
 }
 
-@media all and (min-width: 520px){
+@media all and (min-width: 600px){
   .mix-container .mix,
   .mix-container .gap{
     width: 32%;
   }
 }
 
-.mix{
+.add-info{
   color: #ffffff;
   font-size: 14px;
+
 }
 .user-name{
   text-align: center;
   font-size: 18px;
   font-weight: bold;
+  color: #ffffff;
+}
+.controls{
+  padding: 8px;
+  border-radius: 5px;
+  margin-left: auto!important;
+  margin-right: auto!important;
+  background: rgba(29, 34, 51, 0.74);
+  color: #ffffff;
+}
+.control-label{
+  padding-left: 20px;
+  width: 95px;
+}
+.controlGroup{
+  padding-top: 3px;
+  padding-bottom: 3px;
+  display: inline-block;
+  white-space: nowrap;
 }

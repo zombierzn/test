@@ -58,7 +58,9 @@
             "moment-pt": "moment/lang/pt",
             "bootstrap": "bootstrap-min",
             "paginator" : "paginator",
-            "jquery-mixitup" : "jquery.mixitup.min"
+            "jquery-mixitup" : "jquery.mixitup.min",
+            "jquery-ui" : "jquery-ui.min",
+            "bootstrap-select" : "bootstrap-select.min"
         },
         shim:{
             "bootstrap": {
@@ -78,10 +80,18 @@
             },
             "jquery-mixitup":{
                 deps:["jquery"]
+            },
+            "jquery-ui":{
+                deps:["jquery"]
+            },
+            "bootstrap-select":{
+                deps:["jquery"]
             }
         }
     });
     require(["jquery", "bootstrap"], function ($) {
-
+        window.browser = {
+            device: (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()))
+        };
     })
 })(require, window, document);

@@ -1,29 +1,167 @@
+<div class="controls">
+    <div class="controlGroup">
+        <label class="control-label">Роль:</label>
+        <select id="roleSelect" class="selectpicker" data-width="180px" data-style="btn-primary">
+            <option value="all">Все</option>
+        </select>
+    </div>
+    <div class="controlGroup">
+        <label class="control-label">Город:</label>
+        <select id="citySelect" class="selectpicker" data-width="180px" data-style="btn-primary">
+            <option value="all">Все</option>
+        </select>
+    </div>
+    <div class="controlGroup">
+        <label class="control-label">Ресторан:</label>
+        <select id="restSelect" class="selectpicker" data-width="180px" data-style="btn-primary">
+            <option value="all">Все</option>
+        </select>
+    </div>
+</div>
 <div id="mixit" class="mix-container">
 
 </div>
 <script>
-    require(["jquery", "safe", "api", "clitpl", "jquery-block", "jquery-mixitup"], function ($, safe, api, tf) {
+    require(["jquery", "safe", "api", "clitpl", "lodash", "jquery-block", "jquery-mixitup", "jquery-ui", "bootstrap-select"], function ($, safe, api, tf, _) {
         $(function () {
+            $(".container").block();
             var users = [];
-            var usr = {
+            users.push({
                 name: "Иванов Иван Петрович",
                 role: "менеджер",
                 сity: "Рязань",
-                restaurant:"Кафе 'Привет'",
-                phone:"+79536745681"
-            };
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            users.push(usr);
-            tf.render('users-item', {users: users}, safe.sure(appError, function(text) {
-                $("#mixit").html(text);
-                $('#mixit').mixItUp();
+                restaurant: "Кафе 'Привет'",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "пользователь",
+                сity: "Нижний Новгород",
+                restaurant: "Кафе 'Привет'",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "менеджер",
+                сity: "Москва",
+                restaurant: "Жар-пицца",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "пользователь",
+                сity: "Рязань",
+                restaurant: "Жар-пицца",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "пользователь",
+                сity: "Нижний Новгород",
+                restaurant: "Жар-пицца",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "менеджер",
+                сity: "Рязань",
+                restaurant: "Пицца-шмица",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "менеджер",
+                сity: "Владимир",
+                restaurant: "Пицца-шмица",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "менеджер",
+                сity: "Нижний Новгород",
+                restaurant: "Пицца-шмица",
+                phone: "+79536745681"
+            });
+            users.push({
+                name: "Иванов Иван Петрович",
+                role: "пользователь",
+                сity: "Москва",
+                restaurant: "Ласточка",
+                phone: "+79536745681"
+            });
+
+            var roles = {_sz:1};
+            var restorants = {_sz:1};
+            var cities = {_sz:1};
+            var roleSelect = $('#roleSelect');
+            var citySelect = $('#citySelect');
+            var restSelect = $('#restSelect');
+            _.forEach(users, function(user){
+                if (!roles[user.role]){
+                    roles[user.role] = roles._sz;
+                    roleSelect.append($("<option></option>")
+                            .attr("value",'.role-' + roles[user.role])
+                            .text(user.role));
+                    roles._sz++;
+                }
+                if (!cities[user.сity]){
+                    cities[user.сity] = cities._sz;
+                    citySelect.append($("<option></option>")
+                            .attr("value",'.сity-' + cities[user.сity])
+                            .text(user.сity));
+                    cities._sz++;
+                }
+                if (!restorants[user.restaurant]){
+                    restorants[user.restaurant] = restorants._sz;
+                    restSelect.append($("<option></option>")
+                            .attr("value",'.restaurant-' + restorants[user.restaurant])
+                            .text(user.restaurant));
+                    restorants._sz++;
+                }
+                user.roleId = 'role-' + roles[user.role];
+                user.сityId = 'сity-' + cities[user.сity];
+                user.restaurantId = 'restaurant-' + restorants[user.restaurant];
+            });
+            $('.selectpicker').on('change', function(){
+                var filter = [];
+                if (roleSelect.val()!='all')
+                    filter.push(roleSelect.val());
+                if (citySelect.val()!='all')
+                    filter.push(citySelect.val());
+                if (restSelect.val()!='all')
+                    filter.push(restSelect.val());
+                if (filter.length == 0){
+                    filter = 'all';
+                }else if (filter.length == 1){
+                    filter = filter[0];
+                } else{
+                    filter = filter.join('');
+                }
+                $("#mixit").mixItUp('filter', filter);
+            });
+            if(window.browser.device) {
+                $('.selectpicker').selectpicker('mobile');
+            }else{
+                $('.selectpicker').selectpicker();
+            }
+            tf.render('users-item', {users: users}, safe.sure(appError, function (text) {
+                $("#mixit").html(text).mixItUp({
+                    animation: {
+                        duration: 400
+                    },
+                    callbacks: {
+                        onMixLoad: function () {
+                            $(".container").unblock();
+                        }
+                    }
+                });
+                $('.mix').hover(
+                        function () {
+                            $(this).animate({'backgroundColor': 'rgba(14, 0, 79, 0.60)'}, 300);
+                        },
+                        function () {
+                            $(this).animate({'backgroundColor': 'rgba(0, 79, 39, 0.60)'}, 300);
+                        });
             }));
 
         });
