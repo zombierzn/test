@@ -28,7 +28,7 @@ var mongo = require('mongodb');
             user = value;
             fn = value2;
         }
-        if (user.role && user.role.val && this && this.val && user.role.val == this.val){
+        if (user && user.role && user.role.val && this && this.val && user.role.val == this.val){
             return fn.fn(this);
         }
     });
