@@ -32,6 +32,13 @@ var mongo = require('mongodb');
             return fn.fn(this);
         }
     });
+
+    Handlebars.registerHelper('canEditUser',function(value, ctx) {
+        var curUser = ctx.data.root.user;
+        if (value && value.role && curUser && curUser.regRoles && _.includes(curUser.regRoles, curUser.allRoles[value.role.val])){
+            return ctx.fn(this);
+        }
+    });
 })();
 
 function foodApp(){

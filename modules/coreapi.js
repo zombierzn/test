@@ -91,7 +91,7 @@ CoreApi.prototype.authenticate = function (token, login, password, cb) {
 
     safe.run(function (cb) {
         self._ctx.collection("users", safe.sure(cb, function(users) {
-            users.findOne({login:login, password:password, deleted: {$exists: false}}, safe.sure(cb, function (user) {
+            users.findOne({login:login.toLowerCase(), password:password, deleted: {$exists: false}}, safe.sure(cb, function (user) {
                 if (!user)
                     return cb(new ApiError(('Логин или пароль введены неверно'), ApiError.Subject.INVALID_DATA));
 
@@ -149,21 +149,23 @@ module.exports.init = function (ctx, cb) {
     };
 
     m.init2 = function (cb) {
-        setInterval(function () {
-            safe.yield(function () {
-                var self = api;
-                _.each(_.keys(self._sessions), function (k) {
-                    if (!self._sessions[k] || !self._sessions[k].user || !self._sessions[k]._dtlastaccess) {
-                        delete self._sessions[k];
-                        return;
-                    }
-                    if (Date.now() - self._sessions[k]._dtlastaccess > 60 * 60 * 1000) { //15min
-                        delete self._sessions[k];
-                    }
+        api.init(safe.sure(cb,function() {
+            setInterval(function () {
+                safe.yield(function () {
+                    var self = api;
+                    _.each(_.keys(self._sessions), function (k) {
+                        if (!self._sessions[k] || !self._sessions[k].user || !self._sessions[k]._dtlastaccess) {
+                            delete self._sessions[k];
+                            return;
+                        }
+                        if (Date.now() - self._sessions[k]._dtlastaccess > 60 * 60 * 1000) { //15min
+                            delete self._sessions[k];
+                        }
+                    });
                 });
-            });
-        }, 60000); // each 1 min
-        cb();
+            }, 60000); // each 1 min
+            cb();
+        }));
     }
 
     cb(null, m);

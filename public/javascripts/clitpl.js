@@ -75,6 +75,16 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
                     }
                 });
             }
+            if (opts.ctx.canEditUser) {
+                handlebars.registerHelper('canEditUser', function (value, ctx) {
+                    var curUser = ctx.data.root.user;
+                    if (curUser && ((value && value.role && curUser.regRoles && curUser.regRoles.length && _.includes(_.pluck(curUser.regRoles, 'val'), value.role.val)) || !value || value._id == curUser._id)) {
+                        return ctx.fn(this);
+                    }else {
+                        return ctx.inverse(this);
+                    }
+                });
+            }
             async.parallel(tasks,function (err) {
                 if (err) return cb(err);
                 cb(null,ctx);
@@ -91,6 +101,7 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
             _.forEach(scans, function (scan) {
                 if (scan.v) return;
                 opts.ctx.ifUserRole = opts.ctx.ifUserRole || scan.tf.indexOf("helpers.ifUserRole")!=-1;
+                opts.ctx.canEditUser = opts.ctx.canEditUser || scan.tf.indexOf("helpers.canEditUser")!=-1;
                 opts.ctx.user = opts.ctx.user || scan.tf.indexOf("depth0.user")!=-1;
             })
             this.compile(scans,opts, function (err, templates) {
