@@ -1,11 +1,12 @@
-<div id="responsive" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
+<div id="usrModals"></div>
+<div id="userInfo" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title">Сведения о пользователе</h4>
     </div>
     <form id="userForm" data-id="{{usr._id}}">
         <div class="modal-body">
-            <div class="modal-ctx"></div>
+            <div id="user-ctx"></div>
             <div class="row">
                 <div class="col-md-6">
                     <p>
@@ -72,8 +73,10 @@
         <div class="modal-footer">
             {{#canEditUser usr}}
             {{#../existing}}
-                <button id="delete" type="button" class="btn btn-danger pull-left">Удалить</button>
-                <button id="update" type="submit" class="btn btn-primary">Сохранить</button>
+                {{#canDeleteUser usr}}
+                <button id="delete" type="button" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Удалить</button>
+                {{/canDeleteUser}}
+                <button id="update" type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Сохранить</button>
             {{/../existing}}
             {{^../existing}}
                 <button id="register" class="btn btn-primary" type="submit">Зарегистрировать</button>
@@ -82,14 +85,14 @@
                 <button id="resetpwd" type="button" class="btn btn-warning pull-left">Сменить пароль</button>
             {{/existing}}
             {{else}}
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
             {{/canEditUser}}
 
         </div>
     </form>
 </div>
 <script>
-    require(["jquery", "api", "safe", "jquery-block", "bootstrap-select", "bootstrap-modalmanager"], function ($, api, safe) {
+    require(["jquery", "api", "safe", "clitpl", "jquery-block", "bootstrap-select", "bootstrap-modalmanager"], function ($, api, safe, tf) {
         $(function () {
             if(window.browser.device) {
                 $('.selectpicker').selectpicker('mobile');
@@ -113,7 +116,7 @@
             {{^../existing}}
                             if ($('#password').val().trim() != $('#password2').val().trim()){
                                 $('#password2').focus();
-                                appError({message: "Введённые пароли не совпадают"});
+                                appError({message: "Введённые пароли не совпадают"}, null, '#user-ctx');
                                 return false;
                             }
                             toAdd.password = $('#password').val().trim();
@@ -133,7 +136,7 @@
                             toAdd._id = $form.data().id;
                             if (strEq(toAdd.name) == "{{usr.name}}" && strEq(toAdd.email) == "{{usr.email}}" &&
                                     strEq(toAdd.phone) == "{{usr.phone}}" && strEq(toAdd.extra) == "{{usr.extra}}") {
-                                $('#responsive').modal('hide');
+                                $('#userInfo').modal('hide');
                                 return false;
                             }
 
@@ -141,10 +144,10 @@
                         }, function (err) {
                             $form.unblock();
                             if (err){
-                                appError(err);
+                                appError(err, null, '#user-ctx');
                             }else{
                                 $('#userModalResult').val('update');
-                                $('#responsive').modal('hide');
+                                $('#userInfo').modal('hide');
                                 setTimeout(function(){
                                     appInfo({message:"Данные обновлены"})
                                 }, 500);
@@ -158,10 +161,10 @@
                         }, function (err) {
                             $form.unblock();
                             if (err){
-                                appError(err);
+                                appError(err, null, '#user-ctx');
                             }else{
                                 $('#userModalResult').val('register');
-                                $('#responsive').modal('hide');
+                                $('#userInfo').modal('hide');
                                 setTimeout(function(){
                                     appInfo({message:"Пользователь добавлен"})
                                 }, 500);
@@ -172,5 +175,30 @@
             {{/../existing}}
 
         {{/canEditUser}}
+
+        {{#existing}}
+            $('#resetpwd').click(function(){
+                tf.render('change-pwd', {id: "{{usr._id}}"}, safe.sure(appError, function (text) {
+                    $("#usrModals").html(text);
+                    $('#userChangePwd').modal();
+                }));
+            });
+        {{/existing}}
+        {{#canDeleteUser usr}}
+            $('#delete').click(function(){
+                tf.render('delete-user', {id: "{{usr._id}}", name: "{{usr.name}}"}, safe.sure(appError, function (text) {
+                    $("#modalPlaceHolder").html(text);
+                    $('#userDelete').modal();
+                }));
+            });
+            $('body').on('hidden.bs.modal', '#userDelete', function(){
+                var result = $('#userModalResult').val();
+                if (result == 'delete'){
+                    $('#userInfo').modal('hide');
+                }else{
+                    $('#userModalResult').val('');
+                }
+            });
+        {{/canDeleteUser}}
     });
 </script>

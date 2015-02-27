@@ -1,0 +1,56 @@
+<div id="userChangePwd" class="modal fade" tabindex="-1" data-width="500" style="display: none;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Смена пароля</h4>
+    </div>
+    <form id="changePwdForm">
+        <div class="modal-body">
+            <div id="usr-chpwd-ctx"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="oldpwd">Текущий пароль:</label>
+                    <input id="oldpwd" class="form-control" type="password" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="newpwd">Новый пароль:</label>
+                    <input id="newpwd" class="form-control" type="password" required>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" data-dismiss="modal"  class="btn btn-default">Закрыть</button>
+            <button type="submit" class="btn btn-warning">Сменить</button>
+        </div>
+    </form>
+</div>
+<script>
+    require(["jquery", "api", "safe", "jquery-block", "bootstrap-modalmanager"], function ($, api, safe) {
+        $(function () {
+            var $form = $('#changePwdForm');
+            var userId = "{{id}}";
+            $form.submit(function(e){
+                e.preventDefault();
+                $form.block();
+                safe.run(function (cb) {
+                    var oldpwd = $('#oldpwd').val();
+                    var newpwd = $('#newpwd').val();
+                    api.call("user.changePassword",userId, oldpwd, newpwd, cb);
+                }, function (err, res) {
+                    if (err){
+                        $form.unblock();
+                        appError(err, null, '#usr-chpwd-ctx');
+                        if (res && res.wrongPwd)
+                            $('#oldpwd').focus().select();
+                    }else{
+                        appInfo({message: "Пароль изменён"}, null, '#usr-chpwd-ctx');
+                        setTimeout(function(){
+                            $form.unblock();
+                            $('#userChangePwd').modal('hide');
+                        }, 1300);
+                    }
+                });
+                return false;
+            });
+        })
+    });
+</script>

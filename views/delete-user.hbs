@@ -1,0 +1,40 @@
+<div id="userDelete" class="modal fade" tabindex="-1" data-width="500" style="display: none;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Удаление пользователя</h4>
+    </div>
+    <div class="modal-body">
+        <div id="usr-delete-ctx"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    Вы действительно хотите удалить пользователя <b>{{name}}</b>? Данное действие нельзя отменить.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal"  class="btn btn-default">Закрыть</button>
+        <button id="acceptDelete" type="button" class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i>&nbsp;Удалить</button>
+    </div>
+</div>
+<script>
+    require(["jquery", "api", "safe", "jquery-block", "bootstrap-modalmanager"], function ($, api, safe) {
+        $(function () {
+            var userId = "{{id}}";
+            $('#acceptDelete').click(function(){
+                safe.run(function (cb) {
+                    api.call("user.deleteUser", userId, cb);
+                }, function (err) {
+                    if (err){
+                        appError(err, null, '#usr-delete-ctx');
+                    }else{
+                        appInfo({message: "Пользователь удалён"});
+                        $('#userModalResult').val('delete');
+                        $('#userDelete').modal('hide');
+                    }
+                });
+            });
+        })
+    });
+</script>

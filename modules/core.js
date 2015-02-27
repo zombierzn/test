@@ -35,8 +35,28 @@ var mongo = require('mongodb');
 
     Handlebars.registerHelper('canEditUser',function(value, ctx) {
         var curUser = ctx.data.root.user;
-        if (value && value.role && curUser && curUser.regRoles && _.includes(curUser.regRoles, curUser.allRoles[value.role.val])){
+        if (curUser && ((value && value.role && curUser.regRoles && curUser.regRoles.length && _.includes(_.pluck(curUser.regRoles, 'val'), value.role.val)) || !value || value._id == curUser._id)) {
             return ctx.fn(this);
+        }else {
+            return ctx.inverse(this);
+        }
+    });
+
+    Handlebars.registerHelper('canRegister', function (value, ctx) {
+        var curUser = value;
+        if (curUser && curUser.regRoles && curUser.regRoles.length){
+            return ctx.fn(this);
+        }else{
+            return ctx.inverse(this);
+        }
+    });
+
+    Handlebars.registerHelper('canDeleteUser', function (value, ctx) {
+        var curUser = ctx.data.root.user;
+        if (curUser && curUser.regRoles && curUser.regRoles.length && (!value || value._id != curUser._id)){
+            return ctx.fn(this);
+        }else{
+            return ctx.inverse(this);
         }
     });
 })();

@@ -85,6 +85,27 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
                     }
                 });
             }
+            if (opts.ctx.canRegister) {
+                handlebars.registerHelper('canRegister', function (value, ctx) {
+                    var curUser = value;
+                    if (curUser && curUser.regRoles && curUser.regRoles.length){
+                        return ctx.fn(this);
+                    }else{
+                        return ctx.inverse(this);
+                    }
+                });
+            }
+
+            if (opts.ctx.canDeleteUser) {
+                handlebars.registerHelper('canDeleteUser', function (value, ctx) {
+                    var curUser = ctx.data.root.user;
+                    if (curUser && curUser.regRoles && curUser.regRoles.length && (!value || value._id != curUser._id)) {
+                        return ctx.fn(this);
+                    } else {
+                        return ctx.inverse(this);
+                    }
+                });
+            }
             async.parallel(tasks,function (err) {
                 if (err) return cb(err);
                 cb(null,ctx);
@@ -102,6 +123,8 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
                 if (scan.v) return;
                 opts.ctx.ifUserRole = opts.ctx.ifUserRole || scan.tf.indexOf("helpers.ifUserRole")!=-1;
                 opts.ctx.canEditUser = opts.ctx.canEditUser || scan.tf.indexOf("helpers.canEditUser")!=-1;
+                opts.ctx.canRegister = opts.ctx.canRegister || scan.tf.indexOf("helpers.canRegister")!=-1;
+                opts.ctx.canDeleteUser = opts.ctx.canDeleteUser || scan.tf.indexOf("helpers.canDeleteUser")!=-1;
                 opts.ctx.user = opts.ctx.user || scan.tf.indexOf("depth0.user")!=-1;
             })
             this.compile(scans,opts, function (err, templates) {

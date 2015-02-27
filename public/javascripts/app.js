@@ -1,6 +1,6 @@
 (function (require, window, document, undefined) {
     "use strict";
-    window.appError = function(err, title) {
+    window.appError = function(err, title, selector) {
         if (err) {
             var message = "Unknown error";
             if (err.message) {
@@ -19,11 +19,12 @@
             var t = title || (err.data ? err.data.subject : null) || "Error";
 
             var $error = $('<div class="alert alert-danger" style="display: none;"><div type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</div><h4>' + t + '</h4><p>' + message + '</p></div>');
-            setTimeout(function () { $error.fadeOut("slow", function () { $error.remove(); }); }, 30000);
+            setTimeout(function () { $error.fadeOut("slow", function () { $error.remove(); }); }, 10000);
             $error.fadeIn("slow");
 
-
-            if ($('.modal-ctx').filter(':visible').length)
+            if (selector){
+                var $ctx = $(selector)
+            }else if ($('.modal-ctx').filter(':visible').length)
                 var $ctx = $('.modal-ctx').filter(':visible').eq(0);
             else if ($('.local-ctx').filter(':visible').length)
                 var $ctx = $('.local-ctx').filter(':visible').eq(0);
@@ -41,7 +42,7 @@
         }
     }
 
-    window.appInfo = function(info, title) {
+    window.appInfo = function(info, title, selector) {
         if (info) {
             var message = "Info!";
             if (info.message) {
@@ -57,8 +58,9 @@
             setTimeout(function () { $error.fadeOut("slow", function () { $error.remove(); }); }, 5000);
             $error.fadeIn("slow");
 
-
-            if ($('.modal-ctx').filter(':visible').length)
+            if (selector){
+                var $ctx = $(selector);
+            }else if ($('.modal-ctx').filter(':visible').length)
                 var $ctx = $('.modal-ctx').filter(':visible').eq(0);
             else if ($('.local-ctx').filter(':visible').length)
                 var $ctx = $('.local-ctx').filter(':visible').eq(0);

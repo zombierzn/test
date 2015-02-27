@@ -60,7 +60,7 @@
                 }, safe.sure(appError, function(user){
                     tf.render('user', {usr: user, existing: true, ro: false}, safe.sure(appError, function (text) {
                         $("#modalPlaceHolder").html(text);
-                        $('#responsive').modal();
+                        $('#userInfo').modal();
                     }));
                 }));
             });
