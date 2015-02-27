@@ -10,7 +10,7 @@
                 <div class="col-md-6">
                     <p>
                         <label for="login">Логин:</label>
-                        <input id="login" class="form-control" type="text" value="{{usr.login}}" required {{#existing}} disabled {{/existing}} {{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>
+                        <input id="login" class="form-control" type="text" value="{{usr.login}}" required {{#existing}} disabled {{/existing}} {{^canEditUser usr}} disabled {{/canEditUser}}>
                     </p>
                     {{#canEditUser usr}}
                     {{^../existing}}
@@ -26,11 +26,11 @@
                     {{/canEditUser}}
                     <p>
                         <label for="email">Эл. почта:</label>
-                        <input id="email" class="form-control" type="email" value="{{usr.email}}" {{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>
+                        <input id="email" class="form-control" type="email" value="{{usr.email}}" {{^canEditUser usr}} disabled {{/canEditUser}}>
                     </p>
                     <p>
                         <label for="rest">Ресторан:</label>
-                        <select id="rest" class="selectpicker" data-width="100%" {{#existing}} disabled {{/existing}}{{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>
+                        <select id="rest" class="selectpicker" data-width="100%" {{#existing}} disabled {{/existing}}{{^canEditUser usr}} disabled {{/canEditUser}}>
                             {{#restorans}}
                                 <option value="{{val}}">{{text}}</option>
                             {{/restorans}}
@@ -40,15 +40,15 @@
                 <div class="col-md-6">
                     <p>
                         <label for="name">Ф.И.О.:</label>
-                        <input id="name" class="form-control" type="text"  value="{{usr.name}}" required {{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>
+                        <input id="name" class="form-control" type="text"  value="{{usr.name}}" required {{^canEditUser usr}} disabled {{/canEditUser}}>
                     </p>
                     <p>
                         <label for="phone">Телефон:</label>
-                        <input id="phone" class="form-control" type="tel" value="{{usr.phone}}"{{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>
+                        <input id="phone" class="form-control" type="tel" value="{{usr.phone}}"{{^canEditUser usr}} disabled {{/canEditUser}}>
                     </p>
                     <p>
                         <label for="role">Роль:</label>
-                        <select id="role" class="selectpicker" data-width="100%" {{#existing}} disabled {{/existing}}{{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>
+                        <select id="role" class="selectpicker" data-width="100%" {{#existing}} disabled {{/existing}}{{^canEditUser usr}} disabled {{/canEditUser}}>
                             {{#existing}}
                                 <option value="{{usr.role.val}}">{{usr.role.text}}</option>
                             {{/existing}}
@@ -65,7 +65,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <label for="extra">Доп. информация:</label>
-                    <textarea id="extra" rows="4" class="form-control" {{#canEditUser usr}}{{else}} disabled {{/canEditUser}}>{{usr.extra}}</textarea>
+                    <textarea id="extra" rows="4" class="form-control" {{^canEditUser usr}} disabled {{/canEditUser}}>{{usr.extra}}</textarea>
                 </div>
             </div>
         </div>

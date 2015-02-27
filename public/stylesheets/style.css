@@ -191,3 +191,8 @@
 .modal-backdrop {
   height: 100%;
 }
+#roleFilter,
+#cityFilter,
+#restFilter {
+  display: none;
+}

@@ -35,6 +35,7 @@
             var users = {};
             var mixShown = false;
             function loadUsers() {
+                $("#roleFilter, #cityFilter, #restFilter").css('display', 'none');
                 safe.run(function (cb) {
                     $(".container").block();
                     if (mixShown) {
@@ -71,6 +72,7 @@
                                         .attr("value", '.role-' + roles[user.role.val])
                                         .text(user.role.text));
                                 roles._sz++;
+                                $("#roleFilter").css('display', 'inline-block');
                             }
                             if (user.сity && !cities[user.сity]) {
                                 cities[user.сity] = cities._sz;
@@ -78,6 +80,7 @@
                                         .attr("value", '.сity-' + cities[user.сity])
                                         .text(user.сity));
                                 cities._sz++;
+                                $("#cityFilter").css('display', 'inline-block');
                             }
                             if (user.restaurant && !restorants[user.restaurant]) {
                                 restorants[user.restaurant] = restorants._sz;
@@ -85,6 +88,7 @@
                                         .attr("value", '.restaurant-' + restorants[user.restaurant])
                                         .text(user.restaurant));
                                 restorants._sz++;
+                                $("#restFilter").css('display', 'inline-block');
                             }
                             user.roleId = 'role-' + roles[user.role.val];
                             user.сityId = 'сity-' + cities[user.сity];

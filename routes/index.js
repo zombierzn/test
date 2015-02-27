@@ -14,6 +14,9 @@ module.exports = function (ctx) {
     app.get('/users', isLogged, function(req, res, next){
         res.render('users');
     });
+    app.get('/restaurants', isLogged, function(req, res, next){
+        res.render('restaurants');
+    })
     function isLogged(req, res, next){
         if (res.locals.user && res.locals.user.loggedin) {
             next();

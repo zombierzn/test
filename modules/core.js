@@ -59,6 +59,14 @@ var mongo = require('mongodb');
             return ctx.inverse(this);
         }
     });
+    Handlebars.registerHelper('canCreateRest', function (ctx) {
+        var curUser = ctx.data.root.user;
+        if (curUser && curUser.role && curUser.role.val == 'admin'){
+            return ctx.fn(this);
+        }else{
+            return ctx.inverse(this);
+        }
+    });
 })();
 
 function foodApp(){
@@ -66,7 +74,8 @@ function foodApp(){
     var sessions = {};
     var tmodules = [
         {name:"core",require:"./coreapi"},
-        {name:"user",require:"./userapi"}
+        {name:"user",require:"./userapi"},
+        {name:"restaurant",require:"./restaurantapi"}
     ];
     var modules = {};
     var cfg = config;
