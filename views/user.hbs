@@ -187,7 +187,7 @@
         {{#canDeleteUser usr}}
             $('#delete').click(function(){
                 tf.render('delete-user', {id: "{{usr._id}}", name: "{{usr.name}}"}, safe.sure(appError, function (text) {
-                    $("#modalPlaceHolder").html(text);
+                    $("#usrModals").html(text);
                     $('#userDelete').modal();
                 }));
             });

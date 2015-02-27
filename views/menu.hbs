@@ -33,7 +33,7 @@
         </div>
     </div>
 </nav>
-<div id="modalPlaceHolder">
+<div id="menuModal">
 </div>
 <script>
     require(["jquery", "safe", "api", "clitpl", "jquery-block", "bootstrap-modalmanager"], function ($, safe, api, tf) {
@@ -59,7 +59,7 @@
                     api.call("core.getUser", cb);
                 }, safe.sure(appError, function(user){
                     tf.render('user', {usr: user, existing: true, ro: false}, safe.sure(appError, function (text) {
-                        $("#modalPlaceHolder").html(text);
+                        $("#menuModal").html(text);
                         $('#userInfo').modal();
                     }));
                 }));
