@@ -1,5 +1,3 @@
-<div id="modalPlaceHolder">
-</div>
 <div class="controls">
     {{#canRegister user}}
     <div class="controlGroup">
@@ -146,7 +144,7 @@
             $('body').on('click', '.mix', function () {
                 var id = $(this).data().id;
                 tf.render('user', {usr: users[id], existing: true, ro: false}, safe.sure(appError, function (text) {
-                    $("#modalPlaceHolder").html(text);
+                    $("#modal-1").html(text);
                     $('#userInfo').modal();
                 }));
             }).on('mouseenter', '.mix', function () {
@@ -156,7 +154,7 @@
             });
             $('#newuser').click(function () {
                 tf.render('user', {existing: false, ro: false}, safe.sure(appError, function (text) {
-                    $("#modalPlaceHolder").html(text);
+                    $("#modal-1").html(text);
                     $('#userInfo').modal();
                 }));
             });
