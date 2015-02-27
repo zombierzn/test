@@ -97,6 +97,48 @@ UserApi.prototype.getUsers = function(token, cb){
     ], cb);
 }
 
+UserApi.prototype.deleteUser = function(token, userId, cb) {
+    var self = this;
+    var session = self._api.core.getSession(token);
+    if (!session || !session.user)
+        return cb(new ApiError('Wrong access token', ApiError.Subject.INVALID_TOKEN));
+    if (!userId)
+        return cb(new ApiError('Указаны не все данные', ApiError.Subject.INVALID_DATA));
+    self._ctx.collection("users", safe.sure(cb, function (users) {
+        users.findOne({_id: BSON.ObjectID(userId), deleted: {$exists: false}}, safe.sure(cb, function (user) {
+            if (!user)
+                return cb(new ApiError('Пользователь не найден', ApiError.Subject.NOT_FOUND));
+            if (!session.user.allRoles[user.role] || !_.includes(session.user.regRoles, session.user.allRoles[user.role]) /*|| !session.user.allRests[user.restId]*/)
+                return cb(new ApiError('Недостаточно прав', ApiError.Subject.ACCESS_DENIED));
+            users.update({_id: user._id}, {$set: {deleted: true}}, safe.sure(cb, function(){cb()}));
+        }));
+    }));
+}
+
+UserApi.prototype.changePassword = function(token, userId, oldPwd, newPwd, cb){
+    var self = this;
+    var session = self._api.core.getSession(token);
+    if (!session || !session.user)
+        return cb(new ApiError('Wrong access token', ApiError.Subject.INVALID_TOKEN));
+    if (!oldPwd || !newPwd || !userId)
+        return cb(new ApiError('Указаны не все данные', ApiError.Subject.INVALID_DATA));
+    if (newPwd.length < 5)
+        return cb(new ApiError('Разрешены пароли > 5 символов', ApiError.Subject.INVALID_DATA));
+    if (oldPwd.toString() == newPwd.toString())
+        return cb();
+    self._ctx.collection("users", safe.sure(cb, function(users){
+        users.findOne({_id: BSON.ObjectID(userId), deleted: {$exists: false}}, safe.sure(cb, function(user){
+            if (!user)
+                return cb(new ApiError('Пользователь не найден', ApiError.Subject.NOT_FOUND));
+            if (user.password != oldPwd)
+                return cb(new ApiError('Указан неверный пароль', ApiError.Subject.INVALID_DATA), {wrongPwd: 1});
+            if (!session.user.allRoles[user.role] || !_.includes(session.user.regRoles, session.user.allRoles[user.role]) /*|| !session.user.allRests[user.restId]*/)
+                return cb(new ApiError('Недостаточно прав', ApiError.Subject.ACCESS_DENIED));
+            users.update({_id: user._id}, {$set: {password: newPwd}}, safe.sure(cb, function(){cb()}));
+        }))
+    }));
+}
+
 UserApi.prototype.updateInfo = function(token, user, cb){
     var self = this;
     var session = self._api.core.getSession(token);
@@ -116,7 +158,7 @@ UserApi.prototype.updateInfo = function(token, user, cb){
         },
         function(res, cb){
             if (!res)
-                return cb(new ApiError('Пользователь не найден', ApiError.Subject.DUPLICATE_DATA));
+                return cb(new ApiError('Пользователь не найден', ApiError.Subject.NOT_FOUND));
             //TODO add restaurant check
             if (res._id.toString() != session.user._id.toString() && !_.includes(session.user.regRoles, session.user.allRoles[res.role]))
                 return cb(new ApiError('Недостаточно прав', ApiError.Subject.ACCESS_DENIED));
@@ -124,18 +166,26 @@ UserApi.prototype.updateInfo = function(token, user, cb){
             var sObj = {};
             if (res.name != user.name){
                 nUp = true;
+                if (res.login == session.user.login)
+                    session.user.name = user.name;
                 sObj.name = user.name;
             }
             if (res.email != user.email){
                 nUp = true;
+                if (res.login == session.user.login)
+                    session.user.email = user.email;
                 sObj.email = user.email;
             }
             if (res.phone != user.phone){
                 nUp = true;
+                if (res.login == session.user.login)
+                    session.user.phone = user.phone;
                 sObj.phone = user.phone;
             }
             if (res.extra != user.extra){
                 nUp = true;
+                if (res.login == session.user.login)
+                    session.user.extra = user.extra;
                 sObj.extra = user.extra;
             }
             if (nUp){

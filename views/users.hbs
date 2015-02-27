@@ -1,25 +1,22 @@
-<div id="modalPlaceHolder">
-</div>
 <div class="controls">
-    <div class="controlGroup">
+    {{#canRegister user}}
+    <div class="controlGroup" style="margin-left: 15px">
         <button id="newuser" type="button" class="btn btn-success" ><i class="glyphicon glyphicon-user"></i>&nbsp;<b>+</b></button>
     </div>
+    {{/canRegister}}
     <div class="controlGroup" id="roleFilter">
         <label class="control-label">Роль:</label>
         <select id="roleSelect" class="selectpicker" data-width="180px" data-style="btn-primary">
-            <option value="all">Все</option>
         </select>
     </div>
     <div class="controlGroup" id="cityFilter">
         <label class="control-label">Город:</label>
         <select id="citySelect" class="selectpicker" data-width="180px" data-style="btn-primary">
-            <option value="all">Все</option>
         </select>
     </div>
     <div class="controlGroup" id="restFilter">
         <label class="control-label">Ресторан:</label>
         <select id="restSelect" class="selectpicker" data-width="180px" data-style="btn-primary">
-            <option value="all">Все</option>
         </select>
     </div>
 
@@ -32,116 +29,6 @@
 <script>
     require(["jquery", "safe", "api", "clitpl", "lodash", "jquery-block", "jquery-mixitup", "jquery-ui", "bootstrap-select", "jquery-mixitup-pagination", "bootstrap-modalmanager"], function ($, safe, api, tf, _) {
         $(function () {
-
-            var users = [];
-            users.push({
-                name: "Иванов Иван Петрович",
-                role: {
-                    val: "manager",
-                    text: "Менеджер"
-                },
-                сity: "Рязань",
-                restaurant: "Кафе 'Привет'",
-                phone: "+79536745681",
-                login: "iivanov",
-                _id: 1
-            });
-            users.push({
-                name: "Иванов Петр Петрович",
-                role: {
-                    val: "operator",
-                    text: "Оператор"
-                },
-                сity: "Нижний Новгород",
-                restaurant: "Кафе 'Привет'",
-                phone: "+79536745681",
-                _id: 2,
-                login: "fvfve"
-            });
-            users.push({
-                name: "Николаев Иван Петрович",
-                role: {
-                    val: "manager",
-                    text: "Менеджер"
-                },
-                сity: "Москва",
-                restaurant: "Жар-пицца",
-                phone: "+79536745681",
-                _id: 3,
-                login: "xxcvb"
-            });
-            users.push({
-                name: "Павлоа Иван Владимирович",
-                role: {
-                    val: "operator",
-                    text: "Оператор"
-                },
-                сity: "Рязань",
-                restaurant: "Жар-пицца",
-                phone: "+79536745681",
-                _id: 4,
-                login: "opuip"
-            });
-            users.push({
-                name: "Петров Иван Евгеньевич",
-                role: {
-                    val: "operator",
-                    text: "Оператор"
-                },
-                сity: "Нижний Новгород",
-                restaurant: "Жар-пицца",
-                phone: "+79536745681",
-                _id: 5,
-                login: "jkhjk"
-            });
-            users.push({
-                name: "Путин Владимир Петрович",
-                role: {
-                    val: "manager",
-                    text: "Менеджер"
-                },
-                сity: "Рязань",
-                restaurant: "Пицца-шмица",
-                phone: "+79536745681",
-                _id: 6,
-                login: "zdfzdf"
-            });
-            users.push({
-                name: "Бущ Джордж Петрович",
-                role: {
-                    val: "manager",
-                    text: "Менеджер"
-                },
-                сity: "Владимир",
-                restaurant: "Пицца-шмица",
-                phone: "+79536745681",
-                _id: 7,
-                login: "ertsyh"
-            });
-            users.push({
-                name: "Саркози Иван Алексеевич",
-                role: {
-                    val: "manager",
-                    text: "Менеджер"
-                },
-                сity: "Нижний Новгород",
-                restaurant: "Пицца-шмица",
-                phone: "+79536745681",
-                _id: 8,
-                login: "rtysrty"
-            });
-            users.push({
-                name: "Марьин Петр Петрович",
-                role: {
-                    val: "operator",
-                    text: "Оператор"
-                },
-                сity: "Москва",
-                restaurant: "Ласточка",
-                phone: "+79536745681",
-                _id: 9,
-                login: "sdfsdf"
-            });
             var roleSelect = $('#roleSelect');
             var citySelect = $('#citySelect');
             var restSelect = $('#restSelect');
@@ -151,12 +38,12 @@
                 safe.run(function (cb) {
                     $(".container").block();
                     if (mixShown) {
+                        users = {};
                         mixShown = false;
                         $("#mixit").mixItUp('destroy', true);
                     }
                     api.call("user.getUsers", cb);
                 }, function (err, _users) {
-                    $(".container").unblock();
                     if (err) {
                         appError(err);
                     } else {
@@ -167,6 +54,16 @@
                         var roles = {_sz: 1};
                         var restorants = {_sz: 1};
                         var cities = {_sz: 1};
+                        $('.selectpicker').find('option').remove();
+                        roleSelect.append($("<option></option>")
+                                .attr("value", 'all')
+                                .text('Все'));
+                        citySelect.append($("<option></option>")
+                                .attr("value", 'all')
+                                .text('Все'));
+                        restSelect.append($("<option></option>")
+                                .attr("value", 'all')
+                                .text('Все'));
                         _.forEach(_users, function (user) {
                             if (!roles[user.role.val]) {
                                 roles[user.role.val] = roles._sz;
@@ -175,14 +72,14 @@
                                         .text(user.role.text));
                                 roles._sz++;
                             }
-                            if (!cities[user.сity]) {
+                            if (user.сity && !cities[user.сity]) {
                                 cities[user.сity] = cities._sz;
                                 citySelect.append($("<option></option>")
                                         .attr("value", '.сity-' + cities[user.сity])
                                         .text(user.сity));
                                 cities._sz++;
                             }
-                            if (!restorants[user.restaurant]) {
+                            if (user.restaurant && !restorants[user.restaurant]) {
                                 restorants[user.restaurant] = restorants._sz;
                                 restSelect.append($("<option></option>")
                                         .attr("value", '.restaurant-' + restorants[user.restaurant])
@@ -194,9 +91,7 @@
                             user.restaurantId = 'restaurant-' + restorants[user.restaurant];
                             users[user._id]= user;
                         });
-                        roleSelect.selectpicker('refresh');
-                        citySelect.selectpicker('refresh');
-                        restSelect.selectpicker('refresh');
+                        $('.selectpicker').selectpicker('refresh');
                         tf.render('users-item', {users: _.toArray(users)}, safe.sure(appError, function (text) {
                             $("#mixit").html(text).mixItUp({
                                 animation: {
@@ -249,8 +144,8 @@
             $('body').on('click', '.mix', function () {
                 var id = $(this).data().id;
                 tf.render('user', {usr: users[id], existing: true, ro: false}, safe.sure(appError, function (text) {
-                    $("#modalPlaceHolder").html(text);
-                    $('#responsive').modal();
+                    $("#modal-1").html(text);
+                    $('#userInfo').modal();
                 }));
             }).on('mouseenter', '.mix', function () {
                 $(this).animate({'backgroundColor': 'rgba(14, 0, 79, 0.60)'}, 300);
@@ -259,13 +154,14 @@
             });
             $('#newuser').click(function () {
                 tf.render('user', {existing: false, ro: false}, safe.sure(appError, function (text) {
-                    $("#modalPlaceHolder").html(text);
-                    $('#responsive').modal();
+                    $("#modal-1").html(text);
+                    $('#userInfo').modal();
                 }));
             });
-            $('body').on('hidden.bs.modal', '#responsive', function(){
+            $('body').on('hidden.bs.modal', '#userInfo', function(){
                 var result = $('#userModalResult').val();
-                if (result == 'register' || result == 'update'){
+                $('#userModalResult').val('');
+                if (result == 'register' || result == 'update'|| result == 'delete'){
                     loadUsers();
                 }
             });
