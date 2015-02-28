@@ -1,7 +1,9 @@
-/config/local-config.json
-/node_modules
+config/local-config.json
+node_modules
 .idea
-/public/javascripts/hbs/*
-!/public/javascripts/hbs/placeholder
-/public/prod/*
+
+public/javascripts/hbs/*
+!public/javascripts/hbs/placeholder
+
+public/prod/*
 !/public/prod/placeholder
