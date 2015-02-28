@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title">Сведения о пользователе</h4>
     </div>
-    <form id="userForm" data-id="{{usr._id}}">
+    <form id="userForm">
         <div class="modal-body">
             <div id="user-ctx"></div>
             <div class="row">
@@ -91,113 +91,13 @@
     </form>
 </div>
 <script>
-    require(["jquery", "api", "safe", "clitpl", "jquery-block", "bootstrap-select", "bootstrap-modalmanager"], function ($, api, safe, tf) {
-        $(function () {
-            if(window.browser.device) {
-                $('.selectpicker').selectpicker('mobile');
-            }else{
-                $('.selectpicker').selectpicker();
-            }
-        });
-
-        {{#canEditUser usr}}
-                var $form = $('#userForm');
-                function strEq(v) {
-                    if (!v)
-                        return "";
-                    else
-                        return v.toString();
-                }
-                    $form.submit(function (e) {
-                        e.preventDefault();
-                        safe.run(function (cb) {
-                            var toAdd = {};
-            {{^../existing}}
-                            if ($('#password').val().trim() != $('#password2').val().trim()){
-                                $('#password2').focus();
-                                appError({message: "Введённые пароли не совпадают"}, null, '#user-ctx');
-                                return false;
-                            }
-                            toAdd.password = $('#password').val().trim();
-            {{/../existing}}
-                            toAdd.login = $('#login').val().trim();
-                            toAdd.restId = '54eee9ef2318bd66b21d79aa';// $('#rest').val();
-                            toAdd.name = $('#name').val().trim();
-                            toAdd.role = $('#role').val().trim();
-                            if ($('#email').val().trim())
-                                toAdd.email = $('#email').val().trim();
-                            if ($('#phone').val().trim())
-                                toAdd.phone = $('#phone').val().trim();
-                            if ($('#extra').val().trim())
-                                toAdd.extra = $('#extra').val().trim();
-                            $form.block();
-            {{#../existing}}
-                            toAdd._id = $form.data().id;
-                            if (strEq(toAdd.name) == "{{usr.name}}" && strEq(toAdd.email) == "{{usr.email}}" &&
-                                    strEq(toAdd.phone) == "{{usr.phone}}" && strEq(toAdd.extra) == "{{usr.extra}}") {
-                                $('#userInfo').modal('hide');
-                                return false;
-                            }
-
-                            api.call("user.updateInfo", toAdd, cb);
-                        }, function (err) {
-                            $form.unblock();
-                            if (err){
-                                appError(err, null, '#user-ctx');
-                            }else{
-                                $('#userModalResult').val('update');
-                                $('#userInfo').modal('hide');
-                                setTimeout(function(){
-                                    appInfo({message:"Данные обновлены"})
-                                }, 500);
-                            }
-                        });
-                            return false;
-                        });
-            {{/../existing}}
-            {{^../existing}}
-                            api.call("user.register", toAdd, cb);
-                        }, function (err) {
-                            $form.unblock();
-                            if (err){
-                                appError(err, null, '#user-ctx');
-                            }else{
-                                $('#userModalResult').val('register');
-                                $('#userInfo').modal('hide');
-                                setTimeout(function(){
-                                    appInfo({message:"Пользователь добавлен"})
-                                }, 500);
-                            }
-                        });
-                        return false;
-                    });
-            {{/../existing}}
-
-        {{/canEditUser}}
-
-        {{#existing}}
-            $('#resetpwd').click(function(){
-                tf.render('change-pwd', {id: "{{usr._id}}"}, safe.sure(appError, function (text) {
-                    $("#modal-2").html(text);
-                    $('#userChangePwd').modal();
-                }));
-            });
-        {{/existing}}
-        {{#canDeleteUser usr}}
-            $('#delete').click(function(){
-                tf.render('delete-user', {id: "{{usr._id}}", name: "{{usr.name}}"}, safe.sure(appError, function (text) {
-                    $("#modal-2").html(text);
-                    $('#userDelete').modal();
-                }));
-            });
-            $('body').on('hidden.bs.modal', '#userDelete', function(){
-                var result = $('#userModalResult').val();
-                if (result == 'delete'){
-                    $('#userInfo').modal('hide');
-                }else{
-                    $('#userModalResult').val('');
-                }
-            });
-        {{/canDeleteUser}}
-    });
+    var existing = {{#existing}}true{{else}}false{{/existing}};
+    var user = {
+        _id: "{{usr._id}}",
+        name: "{{usr.name}}",
+        email: "{{usr.email}}",
+        phone: "{{usr.phone}}",
+        extra: "{{usr.extra}}"
+    };
 </script>
+{{{require "user"}}}

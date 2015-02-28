@@ -3,14 +3,9 @@
     <meta charset="utf-8">
     <title>InFood - {{ title }}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
-    <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="stylesheets/bootstrap-modal-bs3patch.css" rel="stylesheet">
-    <link href="stylesheets/bootstrap-modal.css" rel="stylesheet">
-    <link rel='stylesheet' href='/stylesheets/bootstrap-select.min.css' />
+    <!--link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet"-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/javascripts/require.js"></script>
-    <script src="/javascripts/app.js"></script>
+    <script src="{{scriptBase}}require.js" data-main="{{scriptBase}}main.js"></script>
     <script>
         var _apiToken = '{{apiToken}}';
     </script>

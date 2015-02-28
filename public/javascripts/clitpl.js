@@ -1,4 +1,4 @@
-define(["handlebars.runtime","lodash","async","safe","module"], function (handlebars,_,async,safe,module) {
+define(["handlebars.runtime","lodash","async","safe","module","json","text"], function (handlebars,_,async,safe,module) {
     var handlebars = handlebars.default;
     handlebars.registerHelper('when', function(lvalue, op, rvalue, options) {
         if (arguments.length < 4)
@@ -60,6 +60,16 @@ define(["handlebars.runtime","lodash","async","safe","module"], function (handle
         }else{
             return ctx.inverse(this);
         }
+    });
+    handlebars.registerHelper('require', function (val, ctx) {
+        var url = /(?:[A-Za-z0-9-._~!$&'()*+,;=:@]|%[0-9a-fA-F]{2})*(?:\/(?:[A-Za-z0-9-._~!$&'()*+,;=:@]|%[0-9a-fA-F]{2})*)*/.exec(this.url);
+        var mod;
+        if (ctx)
+            mod = val;
+        else if(url && url.length)
+            mod = url[0].replace('/', '');
+        if (mod)
+            return "<script>require(['pages/" + mod + "'], function(mod){mod()});</script>";
     });
     return {
         compile:function(scans,opts, cb) {

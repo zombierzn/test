@@ -19,22 +19,6 @@
     </div>
 </div>
 <script>
-    require(["jquery", "api", "safe", "jquery-block", "bootstrap-modalmanager"], function ($, api, safe) {
-        $(function () {
-            var userId = "{{id}}";
-            $('#acceptDelete').click(function(){
-                safe.run(function (cb) {
-                    api.call("user.deleteUser", userId, cb);
-                }, function (err) {
-                    if (err){
-                        appError(err, null, '#usr-delete-ctx');
-                    }else{
-                        appInfo({message: "Пользователь удалён"});
-                        $('#userModalResult').val('delete');
-                        $('#userDelete').modal('hide');
-                    }
-                });
-            });
-        })
-    });
+    var userId = "{{id}}";
 </script>
+{{{require "delete-user"}}}

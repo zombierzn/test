@@ -15,6 +15,8 @@ var safe = require('safe');
 var _ = require('lodash');
 var ApiError = require('./ApiError');
 var mongo = require('mongodb');
+var fs = require('fs');
+var optimize = require(path.join(__dirname, '..', 'lib', 'optimize.js'));
 
 (function handelbarsHelpers(){
     Handlebars.registerHelper('ifUserRole',function(value, value2) {
@@ -67,6 +69,24 @@ var mongo = require('mongodb');
             return ctx.inverse(this);
         }
     });
+    Handlebars.registerHelper('require', function (val, ctx) {
+        var url = /(?:[A-Za-z0-9-._~!$&'()*+,;=:@]|%[0-9a-fA-F]{2})*(?:\/(?:[A-Za-z0-9-._~!$&'()*+,;=:@]|%[0-9a-fA-F]{2})*)*/.exec(this.url);
+        var mod;
+        if (ctx)
+            mod = val;
+        else if(url && url.length)
+            mod = url[0].replace('/', '');
+        if (mod)
+            return "<script>require(['pages/" + mod + "'], function(mod){mod()});</script>";
+    });
+    Handlebars.registerHelper('scriptBase', function (ctx) {
+        var debugBase = '/javascripts/';
+        var releaseBase = '/prod/';
+        if (config.optimize && config.optimize.enabled)
+            return releaseBase;
+        else
+            return debugBase;
+    });
 })();
 
 function foodApp(){
@@ -85,15 +105,20 @@ function foodApp(){
         });
         console.time("startApp");
         async.series([
+            function opt(cb) {
+                if (config.optimize && config.optimize.enabled)
+                    return optimize.run(cb);
+                return cb();
+            },
             function initBasics(cb){
                 var app = module.exports = express();
                 self.webapp = app;
                 app.set('views', path.join(__dirname, '..', 'views'));
                 app.set('view engine', 'hbs');
-                app.engine('hbs', hbs.handlebarsEngine(Handlebars, {dest: path.join(__dirname, '..', 'public', 'hbs'), debug: false}));
+                app.engine('hbs', hbs.handlebarsEngine(Handlebars, {dest: path.join(__dirname, '..', 'public', 'javascripts', 'hbs'), debug: false}));
 
                 app.set('port', process.env.PORT || 80);
-                app.use(hbs.handlebarsMiddleware({dest: path.join(__dirname, '..', 'public', 'hbs'), src: path.join(__dirname, '..', 'views'), prefix:'/hbs/'}));
+                app.use(hbs.handlebarsMiddleware({dest: path.join(__dirname, '..', 'public','javascripts', 'hbs'), src: path.join(__dirname, '..', 'views'), prefix:'/javascripts/hbs/'}));
                 app.use(session({secret: 'monster mutant boogie', saveUninitialized: true, resave: false}));
                 app.use(lessMiddleware({src :path.join(__dirname, '..', 'views', 'less'), dest: path.join(__dirname,'..', 'public', 'stylesheets'), prefix:'/stylesheets/',debug: false}));
                 app.use(favicon());
