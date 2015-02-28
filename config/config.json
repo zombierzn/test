@@ -1,3 +1,20 @@
 {
-
+  "mongo":{
+    "host":"localhost",
+    "port":27017,
+    "user":"",
+    "password":"",
+    "db":"",
+    "opts":{
+      "auto_reconnect": true,
+      "poolSize": 40
+    }
+  },
+  "app":{
+    "cookie": "api"
+  },
+  "optimize": {
+    "enabled": true,
+    "strategy" : "uglify2"
+  }
 }
