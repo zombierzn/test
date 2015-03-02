@@ -17,7 +17,7 @@ define(['main'], function() {
                             mixShown = false;
                             $("#mixit").mixItUp('destroy', true);
                         }
-                        api.call("user.getUsers", cb);
+                        api.call("user.getAll", cb);
                     }, function (err, _users) {
                         if (err) {
                             appError(err);
@@ -27,7 +27,7 @@ define(['main'], function() {
                                 return;
                             }
                             var roles = {_sz: 1};
-                            var restorants = {_sz: 1};
+                            var restaurants = {_sz: 1};
                             var cities = {_sz: 1};
                             $('.selectpicker').find('option').remove();
                             roleSelect.append($("<option></option>")
@@ -56,17 +56,17 @@ define(['main'], function() {
                                     cities._sz++;
                                     $("#cityFilter").css('display', 'inline-block');
                                 }
-                                if (user.restaurant && !restorants[user.restaurant]) {
-                                    restorants[user.restaurant] = restorants._sz;
+                                if (user.restaurant && !restaurants[user.restaurant]) {
+                                    restaurants[user.restaurant] = restaurants._sz;
                                     restSelect.append($("<option></option>")
-                                        .attr("value", '.restaurant-' + restorants[user.restaurant])
+                                        .attr("value", '.restaurant-' + restaurants[user.restaurant])
                                         .text(user.restaurant));
-                                    restorants._sz++;
+                                    restaurants._sz++;
                                     $("#restFilter").css('display', 'inline-block');
                                 }
                                 user.roleId = 'role-' + roles[user.role.val];
                                 user.сityId = 'сity-' + cities[user.сity];
-                                user.restaurantId = 'restaurant-' + restorants[user.restaurant];
+                                user.restaurantId = 'restaurant-' + restaurants[user.restaurant];
                                 users[user._id] = user;
                             });
                             $('.selectpicker').selectpicker('refresh');

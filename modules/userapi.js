@@ -63,7 +63,7 @@ UserApi.prototype.register = function(token, user, cb){
     ], cb)
 }
 
-UserApi.prototype.getUsers = function(token, cb){
+UserApi.prototype.getAll = function(token, cb){
     var self = this;
     var session = self._api.core.getSession(token);
     if (!session || !session.user)
@@ -73,7 +73,6 @@ UserApi.prototype.getUsers = function(token, cb){
     if (session.user.role.val == 'manager' || session.user.role.val == 'operator') {
         query.restId = session.user.restId;
         query.role = {$ne: 'admin'};
-        query.restId = session.user.restId;
     }
     else if (session.user.role.val == 'admin'){
 
@@ -82,22 +81,18 @@ UserApi.prototype.getUsers = function(token, cb){
     }
     async.waterfall([
         function(cb){
-            self._ctx.collection("users", cb);
+            self._ctx.collection("restaurants", cb);
         },
-        function(users, cb){
-            users.find(query).toArray(cb);
+        function(restaurants, cb){
+            restaurants.find(query).toArray(cb);
         },
         function(res, cb){
-            _.forEach(res, function(user){
-                delete user.password;
-                user.role = session.user.allRoles[user.role]
-            });
             cb(null, res);
         }
     ], cb);
 }
 
-UserApi.prototype.deleteUser = function(token, userId, cb) {
+UserApi.prototype.delete = function(token, userId, cb) {
     var self = this;
     var session = self._api.core.getSession(token);
     if (!session || !session.user)

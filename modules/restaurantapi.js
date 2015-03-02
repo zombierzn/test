@@ -20,6 +20,39 @@ RestaurantApi.prototype.init = function (cb) {
     cb();
 };
 
+RestaurantApi.prototype.getAll = function(token, cb){
+    var self = this;
+    var session = self._api.core.getSession(token);
+    if (!session || !session.user)
+        return cb(new ApiError('Wrong access token', ApiError.Subject.INVALID_TOKEN));
+    var query = {deleted: {$exists: false}};
+
+    if (session.user.role.val == 'manager' || session.user.role.val == 'operator') {
+        query._id = BSON.ObjectID(session.user.restId.toString());
+    }
+    else if (session.user.role.val == 'admin'){
+
+    }else{
+        return cb(null, []);
+    }
+
+    async.waterfall([
+        function(cb){
+            self._ctx.collection("users", cb);
+        },
+        function(users, cb){
+            users.find(query).toArray(cb);
+        },
+        function(res, cb){
+            _.forEach(res, function(user){
+                delete user.password;
+                user.role = session.user.allRoles[user.role]
+            });
+            cb(null, res);
+        }
+    ], cb);
+}
+
 module.exports.init = function (ctx, cb) {
     var api = new RestaurantApi(ctx);
     var m = {api:api};

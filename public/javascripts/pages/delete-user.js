@@ -4,7 +4,7 @@ define(['main'], function() {
             $(function () {
                 $('#acceptDelete').click(function(){
                     safe.run(function (cb) {
-                        api.call("user.deleteUser", userId, cb);
+                        api.call("user.delete", userId, cb);
                     }, function (err) {
                         if (err){
                             appError(err, null, '#usr-delete-ctx');

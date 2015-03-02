@@ -4,20 +4,23 @@
             <button id="newuser" type="button" class="btn btn-success" ><i class="glyphicon glyphicon-plus"></i>&nbsp;Добавить</button>
         </div>
     {{/canCreateRest}}
+    <div class="controlGroup" id="visibleFilter">
+        <label class="control-label">Фильтр:</label>
+        <select id="visibleSelect" class="selectpicker" data-width="180px" data-style="btn-primary">
+            <option value="all">Все</option>
+            <option value=".rest-visible">Видимые</option>
+            <option value=".rest-invisible">Скрытые</option>
+        </select>
+    </div>
     <div class="controlGroup" id="cityFilter">
         <label class="control-label">Город:</label>
         <select id="citySelect" class="selectpicker" data-width="180px" data-style="btn-primary">
         </select>
     </div>
-    <div class="controlGroup" id="restFilter">
-        <label class="control-label">Ресторан:</label>
-        <select id="restSelect" class="selectpicker" data-width="180px" data-style="btn-primary">
-        </select>
-    </div>
-
 </div>
 <div id="mixit" class="mix-container">
 
 </div>
 <div class="pager-list bottom-align">
 </div>
+{{{require}}}
